@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="fruit"
+            type="com.ba.ex.mvvmsample.repository.data.Fruit" />
+    </data>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            tools:context=".ItemDetailFragment">
+
+            <ImageView
+                android:id="@+id/fruit_pic"
+                android:layout_width="match_parent"
+                android:layout_height="360dp"
+                android:contentDescription="@string/fruit_picture"
+                android:scaleType="centerCrop"
+                app:imageFromUrl="@{fruit.imageUrl}" />
+
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:text="@{fruit.name}"
+                android:textColor="@color/title_text_color"
+                android:textSize="34sp" />
+
+            <TextView
+                android:layout_margin="16dp"
+                android:id="@+id/description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:lineSpacingExtra="1.5dp"
+                android:text="@{fruit.description}"
+                android:textColor="@color/content_text_color"
+                android:textSize="16sp" />
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</layout>
