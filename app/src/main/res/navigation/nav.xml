@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/home_fragment"
-        android:name="com.ba.ex.mvvmsample.HomeFragment"
+        android:name="com.ba.ex.mvvmsample.ui.fragment.HomeFragment"
         android:label="HomeFragment"
         tools:layout="@layout/fragment_home">
         <action
@@ -27,7 +27,7 @@
     </fragment>
     <fragment
         android:id="@+id/fruit_pic_detail_fragment"
-        android:name="com.ba.ex.mvvmsample.FruitPicDetailFragment"
+        android:name="com.ba.ex.mvvmsample.ui.fragment.FruitPicDetailFragment"
         android:label="FruitPicDetailFragment"
         tools:layout="@layout/fragment_fruit_pic_detail">
         <argument
@@ -37,13 +37,13 @@
 
     <fragment
         android:id="@+id/item_detail_fragment"
-        android:name="com.ba.ex.mvvmsample.ItemDetailFragment"
+        android:name="com.ba.ex.mvvmsample.ui.fragment.ItemDetailFragment"
         android:label="ItemDetailFragment"
         tools:layout="@layout/fragment_item_detail" />
 
     <fragment
         android:id="@+id/like_fruit_fragment"
-        android:name="com.ba.ex.mvvmsample.LikeFruitFragment"
+        android:name="com.ba.ex.mvvmsample.ui.fragment.LikeFruitFragment"
         android:label="LikeFruitFragment"
         tools:layout="@layout/fragment_like_fruits">
 
@@ -58,7 +58,7 @@
 
     <fragment
         android:id="@+id/like_fruit_detail_fragment"
-        android:name="com.ba.ex.mvvmsample.LikeFruitDetailFragment"
+        android:name="com.ba.ex.mvvmsample.ui.fragment.LikeFruitDetailFragment"
         android:label="LikeFruitDetailFragment"
         tools:layout="@layout/fragment_like_fruit_detail">
         <action
