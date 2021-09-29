@@ -4,30 +4,31 @@ package com.ba.ex.mvvmsample.ui.recycler.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.findViewTreeLifecycleOwner
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.ba.ex.mvvmsample.R
 import com.ba.ex.mvvmsample.databinding.ItemListBinding
 import com.ba.ex.mvvmsample.repository.data.Fruit
-import com.ba.ex.mvvmsample.ui.viewmodels.FruitsViewModel
+import com.orhanobut.logger.Logger
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.launch
 
 
-class FruitListAdapter(
-    private val fruitsViewModel: FruitsViewModel,
-    private val adapterClickCallBack: (Int) -> Unit?
-) : ListAdapter<Fruit, RecyclerView.ViewHolder>(FruitDiffCallback()) {
+class FruitListAdapter : ListAdapter<Fruit, RecyclerView.ViewHolder>(FruitDiffCallback()) {
+    private var selectPosition = 0
+    val selectPositionFlow: MutableSharedFlow<Int> = MutableSharedFlow(1)
+
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         holder as ViewHolder
         holder.binding.run {
             fruit = getItem(position)
-            fruitsViewModel.selectPosition.value?.let {
-                if (position != it) {
-                    itemLayout.setBackgroundColor(root.context.getColor(R.color.not_select_bg))
-                } else {
-                    itemLayout.setBackgroundColor(root.context.getColor(R.color.select_bg))
-                }
-            }
+            Logger.d(">>> onBindViewHolder position = ${holder.absoluteAdapterPosition}")
+            Logger.d(">>> onBindViewHolder selectPosition = $selectPosition")
+            itemLayout.isSelected = position == selectPosition
         }
     }
 
@@ -40,25 +41,45 @@ class FruitListAdapter(
         )
     }
 
-
     inner class ViewHolder(
         val binding: ItemListBinding
     ) : RecyclerView.ViewHolder(binding.root) {
         init {
             binding.itemLayout.setOnClickListener {
-                adapterClickCallBack(adapterPosition)
+                setSelectAndNotify(it.findViewTreeLifecycleOwner(), absoluteAdapterPosition)
             }
+        }
+    }
+
+    private fun setSelectAndNotify(lifecycleOwner: LifecycleOwner?, position: Int) {
+        val lastPosition = selectPosition
+        selectPosition = position
+        notifyItemChanged(lastPosition)
+        notifyItemChanged(selectPosition)
+        lifecycleOwner?.lifecycleScope?.launch {
+            selectPositionFlow.emit(selectPosition)
         }
     }
 
     private class FruitDiffCallback : DiffUtil.ItemCallback<Fruit>() {
 
+        //布局是否需要改变
         override fun areItemsTheSame(oldItem: Fruit, newItem: Fruit): Boolean {
-            return oldItem.id == newItem.id
+            return oldItem == newItem
         }
 
+        /**
+         * 布局内容是否改变,
+         * 这里不同于普通的列表，它需要更新select的视图,有viewHolder的复用与位置的变化
+         * 所以不好控制局部刷新，还是全局更新状态吧
+         */
         override fun areContentsTheSame(oldItem: Fruit, newItem: Fruit): Boolean {
             return false
         }
+    }
+
+    suspend fun resetSelectPosition() {
+        selectPositionFlow.emit(0)
+        selectPosition = 0
     }
 }

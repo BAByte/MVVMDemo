@@ -43,6 +43,10 @@ abstract class BaseFragment<BINDING : ViewDataBinding> :
 
     protected abstract fun subscribeUI()
 
+    fun getDataBinding(): BINDING {
+        return binding
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         this.cancel()

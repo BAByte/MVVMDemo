@@ -4,24 +4,22 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.observe
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import androidx.navigation.fragment.NavHostFragment
 import com.ba.ex.mvvmsample.R
 import com.ba.ex.mvvmsample.databinding.FragmentItemDetailBinding
 import com.ba.ex.mvvmsample.repository.data.Fruit
-import com.ba.ex.mvvmsample.ui.viewmodels.FruitsViewModel
-import com.ba.ex.mvvmsample.ui.viewmodels.LikeFruitsViewModel
+import com.ba.ex.mvvmsample.ui.fragment.viewmodels.FruitsViewModel
+import com.ba.ex.mvvmsample.ui.fragment.viewmodels.LikeFruitsViewModel
 import com.ba.ex.mvvmsample.ui.views.LoadingDialog
+import com.orhanobut.logger.Logger
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.collectLatest
 
 //该类展示数据，ViewModel的实例和父Fragment共享
 class ItemDetailFragment : BaseFragment<FragmentItemDetailBinding>() {
     private lateinit var viewModel: FruitsViewModel
-    private var isLike = false
     private val likeFruitsViewModel: LikeFruitsViewModel by viewModels()
 
     //加载框变量
@@ -58,68 +56,68 @@ class ItemDetailFragment : BaseFragment<FragmentItemDetailBinding>() {
         }
 
         binding.fabLike.setOnClickListener {
-            binding.fruit?.let { fruit ->
-                if (isLike) {
-                    Toast.makeText(
-                        requireContext(),
-                        getString(R.string.toast_liked),
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    return@setOnClickListener
+            launch {
+                if (it.isSelected) {
+                    unLikeFruit(binding.fruit)
+                } else {
+                    likeFruit(binding.fruit)
                 }
-                likeFruit(fruit)
+                setFabIcon(binding.fruit)
             }
         }
     }
 
-    private fun likeFruit(fruit: Fruit) {
-        launch(Dispatchers.Main) {
-            showLoadingDialog()
-            val result = withContext(Dispatchers.IO) {
-                likeFruitsViewModel.saveToDataBase(listOf(fruit))
-            }
-            loadingDialog?.cancel()
-            if (result.isNotEmpty()) {
-                setFabIcon(fruit)
-                Toast.makeText(
-                    requireContext(), getString(R.string.like_success),
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
+    private suspend fun likeFruit(fruit: Fruit?) {
+        if (fruit == null) {
+            return
         }
+
+        showLoadingDialog(R.string.loading_dialog_liking)
+        withContext(Dispatchers.IO) {
+            likeFruitsViewModel.saveToDataBase(listOf(fruit))
+        }
+        loadingDialog?.cancel()
+    }
+
+    private suspend fun unLikeFruit(fruit: Fruit?) {
+        Logger.d(">>> unLikeFruit = $fruit")
+        if (fruit == null) {
+            return
+        }
+        showLoadingDialog(R.string.loading_dialog_delete)
+        withContext(Dispatchers.IO) {
+            likeFruitsViewModel.deleteFromDataBase(fruit)
+        }
+        loadingDialog?.cancel()
     }
 
     override fun subscribeUI() {
-        viewModel.selectPosition.observe(viewLifecycleOwner) { position ->
-            viewModel.fruits.value?.let { fruits ->
-                if (fruits.isNotEmpty()) {
-                    fruits[position].run {
-                        binding.fruit = this
-                        setFabIcon(this)
-                    }
+        lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.getSelectFruit().collectLatest {
+                    Logger.d(">>> ItemDetailFragment collectLatest")
+                    binding.fruit = it
+                    setFabIcon(it)
                 }
             }
         }
     }
 
-    private fun setFabIcon(fruit: Fruit) {
-        likeFruitsViewModel.viewModelScope.launch(Dispatchers.Main) {
-            val result = withContext(Dispatchers.IO) {
-                return@withContext likeFruitsViewModel.getFruit(fruit.id)
-            }
+    private suspend fun isLiked(fruit: Fruit?): Boolean {
+        val result = withContext(Dispatchers.IO) {
+            return@withContext likeFruitsViewModel.getFruit(fruit?.id)
+        }
+        return result != null
+    }
 
-            if (result != null) {
-                isLike = true
-                binding.fabLike.setImageDrawable(ContextCompat.getDrawable(requireContext(),R.drawable.ic_liked))
-            } else {
-                isLike = false
-                binding.fabLike.setImageDrawable(ContextCompat.getDrawable(requireContext(),R.drawable.ic_like))
-            }
+    private fun setFabIcon(fruit: Fruit?) {
+        likeFruitsViewModel.viewModelScope.launch(Dispatchers.Main) {
+            binding.fabLike.isSelected = isLiked(fruit)
         }
     }
 
-    private fun showLoadingDialog() {
-        loadingDialog = LoadingDialog(requireContext(), getString(R.string.loading_dialog_liking))
+    private fun showLoadingDialog(txtId: Int) {
+        loadingDialog = LoadingDialog(requireContext(), getString(txtId))
             .apply {
                 setCanceledOnTouchOutside(false)
                 setCancelable(false)
@@ -129,9 +127,6 @@ class ItemDetailFragment : BaseFragment<FragmentItemDetailBinding>() {
 
     override fun onDestroy() {
         super.onDestroy()
-        cancel()
         loadingDialog?.cancel()
     }
-
-
 }

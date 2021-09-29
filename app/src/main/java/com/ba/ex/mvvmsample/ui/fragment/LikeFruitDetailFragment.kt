@@ -8,7 +8,7 @@ import androidx.navigation.fragment.NavHostFragment
 import com.ba.ex.mvvmsample.ui.fragment.LikeFruitFragment.Companion.ARG_POSITION
 import com.ba.ex.mvvmsample.R
 import com.ba.ex.mvvmsample.databinding.FragmentLikeFruitDetailBinding
-import com.ba.ex.mvvmsample.ui.viewmodels.LikeFruitsViewModel
+import com.ba.ex.mvvmsample.ui.fragment.viewmodels.LikeFruitsViewModel
 import com.orhanobut.logger.Logger
 
 //该类展示数据，ViewModel的实例和父Fragment共享

@@ -1,4 +1,4 @@
-package com.ba.ex.mvvmsample.ui.viewmodels
+package com.ba.ex.mvvmsample.ui.fragment.viewmodels
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
@@ -17,13 +17,14 @@ class LikeFruitsViewModel(
     var fruits: LiveData<List<Fruit>> = likeFruitsRepository.load()
 
     suspend fun deleteFromDataBase(fruit: Fruit) {
-        fruits.value?.let {
-            likeFruitsRepository.deleteFromDataBase(fruit)
-        }
+        likeFruitsRepository.deleteFromDataBase(fruit)
     }
 
-    fun getFruit(id: String): Fruit? {
-        return likeFruitsRepository.getFruit(id)
+    fun getFruit(id: String?): Fruit? {
+        id?.let {
+            return likeFruitsRepository.getFruit(it)
+        }
+        return null
     }
 
     suspend fun deleteFromDataBase(position: Int) {

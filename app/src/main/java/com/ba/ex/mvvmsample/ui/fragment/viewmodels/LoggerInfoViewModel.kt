@@ -1,4 +1,4 @@
-package com.ba.ex.mvvmsample.ui.viewmodels
+package com.ba.ex.mvvmsample.ui.fragment.viewmodels
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel

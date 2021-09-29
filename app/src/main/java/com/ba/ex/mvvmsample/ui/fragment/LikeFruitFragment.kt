@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.ba.ex.mvvmsample.R
 import com.ba.ex.mvvmsample.ui.recycler.adapter.LikeFruitsAdapter
 import com.ba.ex.mvvmsample.databinding.FragmentLikeFruitsBinding
-import com.ba.ex.mvvmsample.ui.viewmodels.LikeFruitsViewModel
+import com.ba.ex.mvvmsample.ui.fragment.viewmodels.LikeFruitsViewModel
 import com.ba.ex.mvvmsample.ui.views.LoadingDialog
 import com.orhanobut.logger.Logger
 import kotlinx.coroutines.*

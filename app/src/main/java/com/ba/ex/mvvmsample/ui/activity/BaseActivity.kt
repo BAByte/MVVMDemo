@@ -1,4 +1,4 @@
-package com.ba.ex.mvvmsample.ui
+package com.ba.ex.mvvmsample.ui.activity
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -22,6 +22,10 @@ abstract class BaseActivity<BINDING:ViewDataBinding> :AppCompatActivity(),Corout
     protected abstract fun onBinding(savedInstanceState: Bundle?):BINDING
 
     protected abstract fun setupUI(binding:BINDING)
+
+    fun getDataBinding():BINDING {
+        return binding
+    }
 
     override fun onDestroy() {
         super.onDestroy()

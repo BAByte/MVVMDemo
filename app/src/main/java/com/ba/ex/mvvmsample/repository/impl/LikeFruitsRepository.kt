@@ -23,6 +23,7 @@ class LikeFruitsRepository(private val fruitDao: FruitDao) : ILikeFruitsReposito
     }
 
     override suspend fun deleteFromDataBase(fruit: Fruit) {
+        delay(1000)
         fruitDao.delete(fruit)
     }
 

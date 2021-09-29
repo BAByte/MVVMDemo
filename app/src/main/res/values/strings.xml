@@ -9,10 +9,10 @@
     <string name="like_carview_pic">水果封面</string>
     <string name="like_success">收藏成功</string>
     <string name="loading_dialog_liking">收藏中…</string>
-    <string name="loading_dialog_delete">删除中…</string>
+    <string name="loading_dialog_delete">取消收藏中…</string>
     <string name="main_activity_title">Orchard</string>
-    <string name="delete_dialog_title">确认删除？</string>
-    <string name="delete_dialog_message">删除该水果吗？</string>
+    <string name="delete_dialog_title">取消收藏？</string>
+    <string name="delete_dialog_message">是否取消收藏？</string>
     <string name="dialog_ok">确定</string>
     <string name="dialog_cancel">取消</string>
     <string name="upload_log_dialog_title">上报日志</string>

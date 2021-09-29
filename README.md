@@ -18,6 +18,34 @@
     + [app/build.gradle](#app-buildgradle)
 
 
+# 2021.9.20 更新日志
++ 增加flow替换livedata的示例代码，收藏界面仍旧保留livedata的示例
++ 首页水果详情增加取消收藏功能
++ 调整viewModel目录到具体的fragment目录或activity目录下：
+
+├── ui //UI层
+│   ├── BaseActivity.kt
+│   ├── BindingAdapter.kt
+│   ├── MainActivity.kt
+│   ├── fragment
+│       ├ viewmodels
+│   │       └── LoggerInfoViewModel.kt
+│   │   ├── BaseFragment.kt
+│   │   ├── FruitPicDetailFragment.kt
+│   ├── activity
+│       ├ viewmodels
+│   │       └── xxx.kt
+│   │   ├── BaseActivity.kt
+│   │   ├── Activity.kt
+│   ├── recycler
+│   │   ├── DividerItemDecoration.java
+│   │   └── adapter
+│   │       ├── FruitListAdapter.kt
+│   │       └── LikeFruitsAdapter.kt
+│   └── views
+│       └── LoadingDialog.kt
+
++ 不导入第三方依赖注入工具，以RepositoryLoader为上层提供数据接口，以符合依赖导致原则
 
 # Sample MVVM App 介绍
 
@@ -278,40 +306,43 @@ android {
 }
 
 dependencies {
+implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.5.0"
+    implementation 'androidx.appcompat:appcompat:1.3.1'
+    implementation "androidx.fragment:fragment-ktx:1.3.6"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.0-alpha01"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.4.0-alpha01"
+    implementation  "androidx.lifecycle:lifecycle-runtime-ktx:2.4.0-alpha01"
+    implementation "androidx.navigation:navigation-fragment-ktx:2.3.5"
+    implementation "androidx.navigation:navigation-ui-ktx:2.3.5"
 
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$rootProject.kotlinVersion"
-    implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation "androidx.fragment:fragment-ktx:1.2.0-rc03"
-    implementation 'androidx.core:core-ktx:1.1.0'
+    kapt "androidx.room:room-compiler:2.3.0"
+    implementation "androidx.room:room-runtime:2.3.0"
+    implementation "androidx.room:room-ktx:2.3.0"
+
+    implementation 'androidx.core:core-ktx:1.6.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'androidx.recyclerview:recyclerview:1.1.0'
-    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    implementation 'androidx.recyclerview:recyclerview:1.2.1'
 
-    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0-rc03"
-    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.2.0-rc03"
-    implementation "androidx.navigation:navigation-fragment-ktx:2.1.0"
-    implementation "androidx.navigation:navigation-ui-ktx:2.1.0"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.0"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0"
 
-    kapt "androidx.room:room-compiler:2.2.2"
-    implementation "androidx.room:room-runtime:2.2.2"
-    implementation "androidx.room:room-ktx:2.2.2"
+    implementation "androidx.work:work-runtime-ktx:2.5.0"
 
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.2"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.2"
-
-    implementation "androidx.work:work-runtime-ktx:2.2.0"
-
-    implementation 'com.google.android.material:material:1.0.0'
+    //    implementation "com.squareup.okhttp3:okhttp:4.1.0"
+    implementation 'com.google.android.material:material:1.4.0'
     implementation 'com.orhanobut:logger:2.2.0'
-    implementation "com.google.code.gson:gson:2.8.5"
+    implementation "com.google.code.gson:gson:2.8.6"
     implementation "com.github.bumptech.glide:glide:4.10.0"
 
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.0'
+
     testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
     androidTestImplementation 'com.android.support.test.espresso:espresso-contrib:3.0.2'
     androidTestImplementation 'com.android.support.test:rules:1.0.2'
-    androidTestImplementation "androidx.work:work-testing:2.2.0"
+    androidTestImplementation "androidx.work:work-testing:2.5.0"
 }
 ~~~
 

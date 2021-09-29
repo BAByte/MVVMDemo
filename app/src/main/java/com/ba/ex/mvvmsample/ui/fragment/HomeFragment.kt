@@ -6,20 +6,26 @@ import android.view.*
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.observe
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.ba.ex.mvvmsample.R
-import com.ba.ex.mvvmsample.ui.recycler.adapter.FruitListAdapter
 import com.ba.ex.mvvmsample.databinding.FragmentHomeBinding
-import com.ba.ex.mvvmsample.ui.viewmodels.FruitsViewModel
-import com.ba.ex.mvvmsample.ui.viewmodels.LoggerInfoViewModel
-import com.ba.ex.mvvmsample.ui.views.LoadingDialog
 import com.ba.ex.mvvmsample.log.workers.ArtificialUploadLogWorker
+import com.ba.ex.mvvmsample.ui.recycler.adapter.FruitListAdapter
+import com.ba.ex.mvvmsample.ui.fragment.viewmodels.FruitsViewModel
+import com.ba.ex.mvvmsample.ui.fragment.viewmodels.LoggerInfoViewModel
+import com.ba.ex.mvvmsample.ui.views.LoadingDialog
 import com.orhanobut.logger.Logger
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 /**
  * 水果列表和水果详情的展示
@@ -30,52 +36,80 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
     private var loadingDialog: LoadingDialog? = null     //加载dialog
 
     private val fruitsViewModel: FruitsViewModel by viewModels()
-
     private val loggerInfoViewModel: LoggerInfoViewModel by viewModels()
-
-    private val adapterClickCallBack = { position: Int ->
-        fruitsViewModel.selectPosition.value?.let {
-            fruitsViewModel.selectPosition.value = position
-            adapter.notifyItemChanged(it)
-            adapter.notifyItemChanged(position)
-        }
-    }
 
     override fun onBinding(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): FragmentHomeBinding {
-        fruitsViewModel.load(requireContext())
-        return FragmentHomeBinding.inflate(inflater, container, false)
-    }
+    ): FragmentHomeBinding = FragmentHomeBinding.inflate(inflater, container, false)
 
     override fun setupUI(binding: FragmentHomeBinding) {
         activity?.title = getString(R.string.main_activity_title)
-        binding.swipeRefreshLayout.isRefreshing = true
         initList()
         setHasOptionsMenu(true)
-        binding.swipeRefreshLayout.setOnRefreshListener {
-            fruitsViewModel.load(requireContext())
+        binding.swipeRefreshLayout.setOnRefreshListener { load() }
+        load()
+    }
+
+    fun load() {
+        lifecycleScope.launch {
+            showLoading()
+            fruitsViewModel.load()
+            dismissLoading()
+        }
+    }
+
+    private fun showLoading() {
+        lifecycleScope.launch(Dispatchers.Main) {
+            binding.swipeRefreshLayout.isRefreshing = true
+        }
+    }
+
+    private fun dismissLoading() {
+        lifecycleScope.launch(Dispatchers.Main) {
+            binding.swipeRefreshLayout.isRefreshing = false
         }
     }
 
     private fun initList() {
-        adapter =
-            FruitListAdapter(
-                fruitsViewModel,
-                adapterClickCallBack
-            )
+        adapter = FruitListAdapter()
         binding.recyclerView.adapter = adapter
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
     }
 
     override fun subscribeUI() {
-        //数据改变
-        fruitsViewModel.fruits.observe(viewLifecycleOwner) { result ->
-            Logger.d("observe : $result")
-            adapter.submitList(result)
-            binding.swipeRefreshLayout.isRefreshing = false
+        lifecycleScope.launch {
+            //只有在数据有变化时，且生命周期处与STARTED后才能受到
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                fruitsViewModel.fruitsFlow.collectLatest {
+                    Logger.d("HomeFragment observe")
+                    adapter.submitList(it) {
+                        smooth2Top()
+                    }
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            //只有在数据有变化时，且生命周期处与STARTED后才能受到
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                adapter.selectPositionFlow.collectLatest {
+                    Logger.d("HomeFragment collectLatest position = $it")
+                    fruitsViewModel.setSelectFruit(it)
+                }
+            }
+        }
+    }
+
+    private fun smooth2Top() {
+        lifecycleScope.launch {
+            try {
+                binding.recyclerView.smoothScrollToPosition(0)
+                adapter.resetSelectPosition()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 
@@ -122,7 +156,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
 
     override fun onDestroy() {
         super.onDestroy()
-        cancel()
         loadingDialog?.cancel()
         confirmDialog?.cancel()
     }

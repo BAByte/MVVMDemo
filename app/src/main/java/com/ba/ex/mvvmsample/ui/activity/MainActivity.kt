@@ -1,4 +1,4 @@
-package com.ba.ex.mvvmsample.ui
+package com.ba.ex.mvvmsample.ui.activity
 
 
 import android.Manifest.permission.READ_EXTERNAL_STORAGE

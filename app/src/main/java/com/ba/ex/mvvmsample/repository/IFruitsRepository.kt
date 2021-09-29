@@ -1,6 +1,7 @@
 package com.ba.ex.mvvmsample.repository
 
 import com.ba.ex.mvvmsample.repository.data.Fruit
+import kotlinx.coroutines.flow.StateFlow
 
 /**
  * 存储区：加载数据，可从网络或者数据库，这里是从网络加载或删除
@@ -8,5 +9,6 @@ import com.ba.ex.mvvmsample.repository.data.Fruit
  * 只有用户主动获取
  */
 interface IFruitsRepository {
-    suspend fun load(): List<Fruit>
+    fun getFruitsFlow(): StateFlow<List<Fruit>>
+    suspend fun load()
 }
