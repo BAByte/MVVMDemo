@@ -1,3 +1,7 @@
+
+# 项目简介
+请看 [WiKi](https://github.com/BAByte/MVVMDemo/wiki/Sample-MVVM-App-%E4%BB%8B%E7%BB%8D)
+
 # 2021.9.20 更新日志
 + 删除测试用例
 + 增加flow替换livedata的示例代码，收藏界面仍旧保留livedata的示例
@@ -29,10 +33,6 @@
 ~~~
 
 + 不导入第三方依赖注入工具，以RepositoryLoader为上层提供数据接口，以符合依赖导致原则
-
-
-# 项目简介
-[WiKi](https://github.com/BAByte/MVVMDemo/wiki/Sample-MVVM-App-%E4%BB%8B%E7%BB%8D)
 
 # 测试用例
 
