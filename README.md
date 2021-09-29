@@ -1,24 +1,5 @@
-- [Sample MVVM App 介绍](#sample-mvvm-app---)
-- [架构图](#---)
-  * [功能列表](#----)
-- [屏幕截图](#----)
-    + [主页](#--)
-    + [收藏](#--)
-    + [水果](#--)
-- [测试用例](#----)
-    + [UI相关](#ui--)
-    + [业务层到数据存储区的数据走向](#--------------)
-- [项目包目录结构](#-------)
-    + [包目录说明](#-----)
-- [依赖库](#---)
-- [ViewModle示例](#viewmodle--)
-- [ViewModel使用示例](#viewmodel----)
-- [Gradle编译配置](#gradle----)
-    + [root/build.gradle](#root-buildgradle)
-    + [app/build.gradle](#app-buildgradle)
-
-
 # 2021.9.20 更新日志
++ 删除测试用例
 + 增加flow替换livedata的示例代码，收藏界面仍旧保留livedata的示例
 + 首页水果详情增加取消收藏功能
 + 调整viewModel目录到具体的fragment目录或activity目录下：
@@ -49,43 +30,9 @@
 
 + 不导入第三方依赖注入工具，以RepositoryLoader为上层提供数据接口，以符合依赖导致原则
 
-# Sample MVVM App 介绍
 
-基于Android最新的JetPack组件创建一个公共的MVVM项目示例，为团队统一框架开发提供支持。
-
-该项目根据应用架构指南：https://developer.android.google.cn/jetpack/docs/guide#build-ui 进行设计。
-
-
-# 架构图
-在MVVM基础上增加一个业务层，与ViewModel平级。
-
-![image](https://github.com/BAByte/pic/raw/master/2453453453rwfwdf.png)
-
-
-## 功能列表
-
-+ 查看各种水果介绍
-
-+ 收藏喜欢的水果到收藏页面
-
-+ 后台定时收集程序日志并上报
-
-
-
-# 屏幕截图
-
-### 主页
-
-![image](https://github.com/BAByte/pic/blob/master/home.png?raw=true)
-
-### 收藏
-
-![image](https://github.com/BAByte/pic/blob/master/like.png?raw=true)
-
-### 水果
-
-![image](https://github.com/BAByte/pic/blob/master/detail.png?raw=true)
-
+# 项目简介
+(wiki)[https://github.com/BAByte/MVVMDemo/wiki/Sample-MVVM-App-%E4%BB%8B%E7%BB%8D]
 
 # 测试用例
 
