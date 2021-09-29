@@ -23,6 +23,7 @@
 + 首页水果详情增加取消收藏功能
 + 调整viewModel目录到具体的fragment目录或activity目录下：
 
+~~~ 
 ├── ui //UI层
 │   ├── BaseActivity.kt
 │   ├── BindingAdapter.kt
@@ -44,6 +45,7 @@
 │   │       └── LikeFruitsAdapter.kt
 │   └── views
 │       └── LoadingDialog.kt
+~~~
 
 + 不导入第三方依赖注入工具，以RepositoryLoader为上层提供数据接口，以符合依赖导致原则
 
