@@ -32,7 +32,7 @@
 
 
 # 项目简介
-(wiki)[https://github.com/BAByte/MVVMDemo/wiki/Sample-MVVM-App-%E4%BB%8B%E7%BB%8D]
+[WiKi](https://github.com/BAByte/MVVMDemo/wiki/Sample-MVVM-App-%E4%BB%8B%E7%BB%8D)
 
 # 测试用例
 
