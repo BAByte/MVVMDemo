@@ -3,10 +3,7 @@ package com.ba.ex.mvvmsample
 import android.annotation.SuppressLint
 import android.app.Application
 import android.content.Context
-import androidx.work.Constraints
-import androidx.work.NetworkType
-import androidx.work.PeriodicWorkRequest
-import androidx.work.WorkManager
+import androidx.work.*
 import com.ba.ex.mvvmsample.repository.RepositoryLoader
 import com.ba.ex.mvvmsample.log.workers.AutoLogInfoCollectorWorker
 import com.ba.ex.mvvmsample.utils.ProcessUtils
@@ -62,6 +59,10 @@ class App : Application() {
             .setConstraints(constraints)
             .build()
 
-        WorkManager.getInstance(this).enqueue(request)//这串代码是加入任务队列的意思
+        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+            TAG,
+            ExistingPeriodicWorkPolicy.KEEP,
+            request
+        )//这串代码是加入任务队列的意思
     }
 }
