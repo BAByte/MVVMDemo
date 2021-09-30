@@ -9,18 +9,14 @@ import kotlinx.coroutines.delay
 import java.io.InputStream
 
 object FruitsSourceManager {
-    private var i = 1
+    private var i = 0
     private const val switchingFactor = 3
+    private const val switchFullFlag = 0
     private const val switchFewFlag = 1
 
     suspend fun load(): List<Fruit> {
         delay(2000)  //模拟网络下载
-        val inputStream = if (i % switchingFactor <= switchFewFlag) {
-            loadFull()
-        } else {
-            loadFew()
-        }
-        i++
+        val inputStream = simulationDataChange()
         val len = inputStream.available()
         val buffer = ByteArray(len)
         inputStream.read(buffer)
@@ -31,6 +27,21 @@ object FruitsSourceManager {
         )
     }
 
+    private fun simulationDataChange(): InputStream {
+        i++
+        return when (i % switchingFactor) {
+            switchFullFlag -> {
+                loadFull()
+            }
+            switchFewFlag -> {
+                loadFew()
+            }
+            else -> {
+                loadNUll()
+            }
+        }
+    }
+
     private fun loadFull(): InputStream {
         Logger.d("FruitWebRequest >>> load")
         return App.ctx.assets.open("plants.json")
@@ -39,5 +50,11 @@ object FruitsSourceManager {
     private fun loadFew(): InputStream {
         Logger.d("FruitWebRequest >>> load")
         return App.ctx.assets.open("plants2.json")
+    }
+
+
+    private fun loadNUll(): InputStream {
+        Logger.d("FruitWebRequest >>> load")
+        return App.ctx.assets.open("plants3.json")
     }
 }

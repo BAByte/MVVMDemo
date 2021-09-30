@@ -93,13 +93,18 @@ class ItemDetailFragment : BaseFragment<FragmentItemDetailBinding>() {
 
     override fun subscribeUI() {
         lifecycleScope.launch {
-            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.getSelectFruit().collectLatest {
-                    Logger.d(">>> ItemDetailFragment collectLatest")
-                    binding.fruit = it
-                    setFabIcon(it)
-                }
+            viewModel.getSelectFruit().collectLatest {
+                Logger.d(">>> ItemDetailFragment collectLatest")
+                binding.fruit = it
+                setFabIcon(it)
+                resetImage(it)
             }
+        }
+    }
+
+    private fun resetImage(fruit: Fruit?) {
+        if (fruit == null) {
+            binding.fruitPic.setImageBitmap(null)
         }
     }
 
