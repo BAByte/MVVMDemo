@@ -9,7 +9,7 @@ import kotlinx.coroutines.delay
 import java.io.InputStream
 
 object FruitsSourceManager {
-    private var i = 0
+    private var i = -1
     private const val switchingFactor = 3
     private const val switchFullFlag = 0
     private const val switchFewFlag = 1

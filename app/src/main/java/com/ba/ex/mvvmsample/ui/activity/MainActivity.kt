@@ -29,6 +29,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>() {
         )
 
     override fun setupUI(binding: ActivityMainBinding) {
+        title = getString(R.string.main_activity_title)
     }
 
     // 请求多个权限

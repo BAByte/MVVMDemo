@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright 2018 Google LLC
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,12 +16,17 @@
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-
-    <item android:id="@+id/menu_like"
+    <item
+        android:id="@+id/menu_msg"
+        android:title="@string/menu_msg"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/menu_like"
         android:icon="@drawable/ic_menu_like"
-        android:title="@string/menu_like"/>
-    <item android:id="@+id/menu_upload_logger"
+        android:title="@string/menu_like" />
+    <item
+        android:id="@+id/menu_upload_logger"
         android:icon="@drawable/ic_upload_logger"
-        android:title="@string/menu_upload_logger"/>
+        android:title="@string/menu_upload_logger" />
 
 </menu>

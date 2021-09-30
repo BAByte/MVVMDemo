@@ -3,6 +3,7 @@
     <string name="title_item_detail">Item Detail</string>
     <string name="fruit_picture">水果照片</string>
     <string name="big_image_view">放大看水果照片</string>
+    <string name="menu_msg">消息(%d)</string>
     <string name="menu_like">我的收藏</string>
     <string name="menu_upload_logger">上报程序日志</string>
     <string name="title_like">My Like</string>
