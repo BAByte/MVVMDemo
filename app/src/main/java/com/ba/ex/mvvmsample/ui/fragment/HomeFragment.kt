@@ -50,6 +50,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
         setHasOptionsMenu(true)
         binding.swipeRefreshLayout.setOnRefreshListener { load() }
         load()
+        Logger.d(">>> HomeFragment setupUI")
     }
 
     fun load() {
@@ -80,25 +81,26 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
 
     override fun subscribeUI() {
         lifecycleScope.launch {
-            //只有在数据有变化时，且生命周期处与STARTED后才能受到
-            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                fruitsViewModel.fruitsFlow.collectLatest {
-                    Logger.d("HomeFragment observe")
-                    adapter.submitList(it) {
-                        smooth2Top()
-                    }
+            //只有在数据有变化时，且生命周期处与STARTED后才能收到，适合用来做实时状态监听的视图，但不适合当前场景
+//            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            fruitsViewModel.fruitsFlow.collectLatest {
+                Logger.d("HomeFragment observe")
+                adapter.submitList(it) {
+                    smooth2Top()
+                    Logger.d("HomeFragment submitList")
                 }
             }
+//            }
         }
 
         lifecycleScope.launch {
-            //只有在数据有变化时，且生命周期处与STARTED后才能受到
-            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                adapter.selectPositionFlow.collectLatest {
-                    Logger.d("HomeFragment collectLatest position = $it")
-                    fruitsViewModel.setSelectFruit(it)
-                }
+            //只有在数据有变化时，且生命周期处与STARTED后才能收到，适合用来做实时状态监听的视图，但不适合当前场景
+//            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            adapter.selectPositionFlow.collectLatest {
+                Logger.d("HomeFragment collectLatest position = $it")
+                fruitsViewModel.setSelectFruit(it)
             }
+//            }
         }
     }
 
