@@ -32,6 +32,14 @@
                     android:layout_height="300dp"
                     android:contentDescription="@string/fruit_picture" />
 
+                <ImageView
+                    android:visibility="invisible"
+                    android:id="@+id/data_null_tip"
+                    android:layout_gravity="center"
+                    android:src="@drawable/nothing"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
                 <com.google.android.material.floatingactionbutton.FloatingActionButton
                     android:layout_width="wrap_content"
                     android:layout_gravity="bottom|end"

@@ -2,8 +2,8 @@ package com.ba.ex.mvvmsample.ui.fragment
 
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.*
 import androidx.navigation.fragment.NavHostFragment
@@ -57,21 +57,19 @@ class ItemDetailFragment : BaseFragment<FragmentItemDetailBinding>() {
 
         binding.fabLike.setOnClickListener {
             launch {
-                if (it.isSelected) {
-                    unLikeFruit(binding.fruit)
-                } else {
-                    likeFruit(binding.fruit)
+                binding.fruit?.let { fruit ->
+                    if (it.isSelected) {
+                        unLikeFruit(fruit)
+                    } else {
+                        likeFruit(fruit)
+                    }
+                    setFabIcon(fruit)
                 }
-                setFabIcon(binding.fruit)
             }
         }
     }
 
-    private suspend fun likeFruit(fruit: Fruit?) {
-        if (fruit == null) {
-            return
-        }
-
+    private suspend fun likeFruit(fruit: Fruit) {
         showLoadingDialog(R.string.loading_dialog_liking)
         withContext(Dispatchers.IO) {
             likeFruitsViewModel.saveToDataBase(listOf(fruit))
@@ -79,11 +77,8 @@ class ItemDetailFragment : BaseFragment<FragmentItemDetailBinding>() {
         loadingDialog?.cancel()
     }
 
-    private suspend fun unLikeFruit(fruit: Fruit?) {
+    private suspend fun unLikeFruit(fruit: Fruit) {
         Logger.d(">>> unLikeFruit = $fruit")
-        if (fruit == null) {
-            return
-        }
         showLoadingDialog(R.string.loading_dialog_delete)
         withContext(Dispatchers.IO) {
             likeFruitsViewModel.deleteFromDataBase(fruit)
@@ -95,27 +90,37 @@ class ItemDetailFragment : BaseFragment<FragmentItemDetailBinding>() {
         lifecycleScope.launch {
             viewModel.getSelectFruit().collectLatest {
                 Logger.d(">>> ItemDetailFragment collectLatest")
-                binding.fruit = it
-                setFabIcon(it)
-                resetImage(it)
+                it?.let {
+                    binding.fruit = it
+                    setFabIcon(it)
+                    dismissNullUI()
+                } ?: run {
+                    showNullUI()
+                }
             }
         }
     }
 
-    private fun resetImage(fruit: Fruit?) {
-        if (fruit == null) {
-            binding.fruitPic.setImageBitmap(null)
-        }
+    private fun showNullUI() {
+        binding.fruit = null
+        binding.fruitPic.setImageBitmap(null)
+        binding.fabLike.visibility = View.INVISIBLE
+        binding.dataNullTip.visibility = View.VISIBLE
     }
 
-    private suspend fun isLiked(fruit: Fruit?): Boolean {
+    private fun dismissNullUI() {
+        binding.fabLike.visibility = View.VISIBLE
+        binding.dataNullTip.visibility = View.INVISIBLE
+    }
+
+    private suspend fun isLiked(fruit: Fruit): Boolean {
         val result = withContext(Dispatchers.IO) {
-            return@withContext likeFruitsViewModel.getFruit(fruit?.id)
+            return@withContext likeFruitsViewModel.getFruit(fruit.id)
         }
         return result != null
     }
 
-    private fun setFabIcon(fruit: Fruit?) {
+    private fun setFabIcon(fruit: Fruit) {
         likeFruitsViewModel.viewModelScope.launch(Dispatchers.Main) {
             binding.fabLike.isSelected = isLiked(fruit)
         }
