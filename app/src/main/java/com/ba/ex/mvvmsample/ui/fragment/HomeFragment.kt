@@ -13,7 +13,10 @@ import com.ba.ex.mvvmsample.ui.recycler.adapter.FruitListAdapter
 import com.ba.ex.mvvmsample.ui.views.LoadingDialog
 import com.orhanobut.logger.Logger
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 /**
@@ -65,21 +68,21 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
     }
 
     override fun subscribeUI() {
+        //使用 launchIn 替换 collect 我们可以在单独的协程中启动流的收集，这样就可以立即继续进一步执行代码
         lifecycleScope.launch {
-            fruitsViewModel.fruitsFlow.collectLatest {
+            //onEach相当于回调，每次数据到了后会执行onEach
+            fruitsViewModel.fruitsFlow.onEach {
                 Logger.d("HomeFragment observe")
                 adapter.submitList(it) {
                     smooth2Top()
                     Logger.d("HomeFragment submitList")
                 }
-            }
-        }
+            }.launchIn(this)
 
-        lifecycleScope.launch {
-            adapter.selectPositionFlow.collectLatest {
+            adapter.selectPositionFlow.onEach {
                 Logger.d("HomeFragment collectLatest position = $it")
                 fruitsViewModel.setSelectFruit(it)
-            }
+            }.launchIn(this)
         }
     }
 
