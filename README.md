@@ -4,6 +4,8 @@
 
 # 2021.11.27 更新日志
 + 修复Fragment存在的内存泄漏问题
+1.binding
+2.livedata.observe
 
 # 2021.9.20 更新日志
 + 删除测试用例
