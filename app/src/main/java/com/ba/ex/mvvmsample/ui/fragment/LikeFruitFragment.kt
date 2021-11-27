@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.observe
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.GridLayoutManager
 import com.ba.ex.mvvmsample.R
@@ -31,16 +30,16 @@ class LikeFruitFragment : BaseFragment<FragmentLikeFruitsBinding>() {
     private var loadingDialog: LoadingDialog? = null
 
     override fun onBinding(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): FragmentLikeFruitsBinding = FragmentLikeFruitsBinding.inflate(
-        inflater, container, false
+            inflater, container, false
     )
 
     override fun setupUI(binding: FragmentLikeFruitsBinding) {
         likeFruitsViewModel = ViewModelProvider(
-            requireActivity(), ViewModelProvider.NewInstanceFactory()
+                requireActivity(), ViewModelProvider.NewInstanceFactory()
         ).get(LikeFruitsViewModel::class.java)
 
         Logger.d("LikeFruitFragment : viewModel = $likeFruitsViewModel")
@@ -48,16 +47,16 @@ class LikeFruitFragment : BaseFragment<FragmentLikeFruitsBinding>() {
         activity?.title = getString(R.string.title_like)
 
         adapter =
-            LikeFruitsAdapter(
-                adapterClickCallBack, adapterLongPressCallBack
-            )
+                LikeFruitsAdapter(
+                        adapterClickCallBack, adapterLongPressCallBack
+                )
 
         binding.recyclerView.layoutManager = GridLayoutManager(requireContext(), 4)
         binding.recyclerView.adapter = adapter
     }
 
-     override fun subscribeUI() {
-        likeFruitsViewModel.fruits.observe(this) {
+    override fun subscribeUI() {
+        likeFruitsViewModel.fruits.observe(viewLifecycleOwner) {
             Logger.d("LikeFruitsActivity observe = $it")
             adapter.submitList(it)
         }
@@ -65,30 +64,30 @@ class LikeFruitFragment : BaseFragment<FragmentLikeFruitsBinding>() {
 
     private fun showDeleteDialog(position: Int) {
         confirmDialog = AlertDialog.Builder(requireContext())
-            .setTitle(getString(R.string.delete_dialog_title))
-            .setMessage(getString(R.string.delete_dialog_message))
-            .setPositiveButton(getString(R.string.dialog_ok)) { dialog, which ->
-                launch {
-                    showLoadingDialog()
-                    withContext(Dispatchers.IO) {
-                        likeFruitsViewModel.deleteFromDataBase(position)
-                    }
-                    loadingDialog?.cancel()
+                .setTitle(getString(R.string.delete_dialog_title))
+                .setMessage(getString(R.string.delete_dialog_message))
+                .setPositiveButton(getString(R.string.dialog_ok)) { dialog, which ->
+                    launch {
+                        showLoadingDialog()
+                        withContext(Dispatchers.IO) {
+                            likeFruitsViewModel.deleteFromDataBase(position)
+                        }
+                        loadingDialog?.cancel()
 //                    refresh(position)
+                    }
                 }
-            }
-            .setNegativeButton(getString(R.string.dialog_cancel)) { dialog, which ->
-            }.create()
+                .setNegativeButton(getString(R.string.dialog_cancel)) { dialog, which ->
+                }.create()
 
         confirmDialog?.show()
     }
 
     private fun showLoadingDialog() {
         loadingDialog = LoadingDialog(requireContext(), getString(R.string.loading_dialog_delete))
-            .apply {
-                setCanceledOnTouchOutside(false)
-                setCancelable(false)
-            }
+                .apply {
+                    setCanceledOnTouchOutside(false)
+                    setCancelable(false)
+                }
         loadingDialog?.show()
     }
 
@@ -100,21 +99,20 @@ class LikeFruitFragment : BaseFragment<FragmentLikeFruitsBinding>() {
     private fun toDetailFragment(position: Int) {
         val bundle = Bundle().apply {
             putInt(
-                ARG_POSITION,
-                position
+                    ARG_POSITION,
+                    position
             )
         }
         Navigation.findNavController(binding.root)
-            .navigate(R.id.action_like_fruit_fragment_to_like_fruit_detail_fragment, bundle)
+                .navigate(R.id.action_like_fruit_fragment_to_like_fruit_detail_fragment, bundle)
     }
 
     private val adapterLongPressCallBack = { position: Int ->
         showDeleteDialog(position)
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        cancel()
+    override fun onDestroyView() {
+        super.onDestroyView()
         loadingDialog?.cancel()
         confirmDialog?.cancel()
     }

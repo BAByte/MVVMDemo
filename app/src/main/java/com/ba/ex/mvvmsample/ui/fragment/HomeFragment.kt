@@ -28,9 +28,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
     private val fruitsViewModel: FruitsViewModel by viewModels()
 
     override fun onBinding(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): FragmentHomeBinding = FragmentHomeBinding.inflate(inflater, container, false)
 
     override fun setupUI(binding: FragmentHomeBinding) {
@@ -97,9 +97,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
         }
     }
 
-    override fun onDestroy() {
+    override fun onDestroyView() {
+        super.onDestroyView()
         super.onDestroy()
         loadingDialog?.cancel()
+        loadingDialog = null
     }
-
 }

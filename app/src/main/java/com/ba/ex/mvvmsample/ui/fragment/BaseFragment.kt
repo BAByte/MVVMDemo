@@ -6,25 +6,26 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.Fragment
+import com.ba.ex.mvvmsample.ui.fragment.commission.FragmentDataBindingInstance
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.cancel
-import kotlin.properties.Delegates
 
 abstract class BaseFragment<BINDING : ViewDataBinding> :
-    Fragment(), CoroutineScope by MainScope() {
-
-    var binding: BINDING by Delegates.notNull()
+        Fragment(), CoroutineScope by MainScope() {
+    //防止内存泄漏
+    val binding: BINDING by FragmentDataBindingInstance()
 
     final override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View? {
-        binding = onBinding(inflater, container, savedInstanceState).apply {
+        onBinding(inflater, container, savedInstanceState)?.apply {
             lifecycleOwner = this@BaseFragment
+            return root
         }
-        return binding.root
+        return null
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -34,18 +35,14 @@ abstract class BaseFragment<BINDING : ViewDataBinding> :
     }
 
     protected abstract fun onBinding(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): BINDING
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
+    ): BINDING?
 
     protected abstract fun setupUI(binding: BINDING)
 
     protected abstract fun subscribeUI()
-
-    fun getDataBinding(): BINDING {
-        return binding
-    }
 
     override fun onDestroy() {
         super.onDestroy()

@@ -2,6 +2,9 @@
 # 项目简介
 请看 [WiKi](https://github.com/BAByte/MVVMDemo/wiki/Sample-MVVM-App-%E4%BB%8B%E7%BB%8D)
 
+# 2021.11.27 更新日志
++ 修复Fragment存在的内存泄漏问题
+
 # 2021.9.20 更新日志
 + 删除测试用例
 + 增加flow替换livedata的示例代码，收藏界面仍旧保留livedata的示例
@@ -183,7 +186,7 @@ class LikeFruitFragment : BaseFragment<FragmentLikeFruitsBinding>() {
     
    	 //订阅数据更新
      private fun subscribeUI() {
-        likeFruitsViewModel.fruits.observe(this) {
+        likeFruitsViewModel.fruits.observe(viewLifecycleOwner) {
             Logger.d("LikeFruitsActivity observe = $it")
         }
     	}

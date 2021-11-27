@@ -135,8 +135,9 @@ class ItemDetailFragment : BaseFragment<FragmentItemDetailBinding>() {
         loadingDialog?.show()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
         loadingDialog?.cancel()
+        loadingDialog = null
     }
 }
